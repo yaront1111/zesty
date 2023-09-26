@@ -1,0 +1,4 @@
+Flask==2.1.1
+Flask-Limiter==1.5.0
+itsdangerous==2.1.1
+boto3==1.24.0

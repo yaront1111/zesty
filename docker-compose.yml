@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    image: your_container_registry/your_app_image:latest
+    ports:
+      - "80:80"
+    environment:
+      - API_TOKEN=yourApiToken
+      - FLASK_SECRET_KEY=yourFlaskSecretKey
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000
+      - CONTAINER_REGISTRY=your_container_registry
+    depends_on:
+      - dynamodb
+
+  dynamodb:
+    image: zestyco/dynamodb-challenge:amd
+    ports:
+      - "8000:8000"
