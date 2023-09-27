@@ -1,25 +1,15 @@
 version: '3.8'
 
-secrets:
-  api_token:
-    external: true
-  flask_secret_key:
-    external: true
-  code_name:
-    external: true
-
 services:
   app:
     image: yaront111/zesty111:latest
     ports:
       - "127.0.0.1:5000:5000"
     environment:
-      - DYNAMODB_ENDPOINT=http://dynamodb:8000
-      - CONTAINER_REGISTRY=https://hub.docker.com/repository/docker/yaront111/zesty111
-    secrets:
-      - api_token
-      - flask_secret_key
-      - code_name
+      DYNAMODB_ENDPOINT: http://dynamodb:8000
+      CONTAINER_REGISTRY: https://hub.docker.com/repository/docker/yaront111/zesty111
+    env_file:
+      - ./App/app/dev/.env
     networks:
       - backend
     deploy:

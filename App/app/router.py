@@ -8,12 +8,9 @@ import logging
 import os
 
 # Initialize secrets
-with open("/run/secrets/api_token", "r") as file:
-    API_TOKEN = file.read().strip()
-with open("/run/secrets/flask_secret_key", "r") as file:
-    FLASK_SECRET_KEY = file.read().strip()
-with open("/run/secrets/flask_secret_key", "r") as file:
-    CODE_NAME = file.read().strip()
+API_TOKEN = os.environ['API_TOKEN']
+FLASK_SECRET_KEY = os.environ['FLASK_SECRET_KEY']
+CODE_NAME = os.environ['CODE_NAME']
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "fallbackSecretKey")
