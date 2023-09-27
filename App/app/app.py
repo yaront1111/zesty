@@ -12,9 +12,8 @@ logging.basicConfig(
     level=logging.INFO,
     filename="fetch_secret.log",
     filemode="a",
-    format="%(asctime)s - " "%(levelname)s - " "%(message)s",
+    format="%(asctime)s - %(levelname)s - %(message)s",
 )
-
 
 def fetch_secret(codeName):
     try:
@@ -24,15 +23,16 @@ def fetch_secret(codeName):
         logging.info(f"Fetched item from DynamoDB: {response}")
     except ClientError as e:
         logging.error(f"ClientError fetching from DynamoDB: {e}")
-        return None
+        return None, None
     except ParamValidationError as e:
         logging.error(f"ParamValidationError fetching from DynamoDB: {e}")
-        return None
+        return None, None
     else:
         if "Item" in response:
             secret_code = response["Item"]["secretCode"]["S"]
+            codeName_from_db = response["Item"]["codeName"]["S"]
             logging.info(f"Successfully retrieved secret code: {secret_code}")
-            return secret_code
+            return secret_code, codeName_from_db
         else:
             logging.warning("Secret code not found in DynamoDB.")
-            return None
+            return None, None

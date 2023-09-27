@@ -7,36 +7,40 @@ services:
     ports:
       - "127.0.0.1:5000:5000"
     environment:
+      - AWS_ACCESS_KEY_ID=dummy-access-key
+      - AWS_SECRET_ACCESS_KEY=dummy-secret-key
+      - AWS_DEFAULT_REGION=us-west-2
       - DYNAMODB_ENDPOINT=http://dynamodb:8000
       - CONTAINER_REGISTRY=https://hub.docker.com/repository/docker/yaront111/zesty111
     networks:
       - backend
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 128M
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-
-  dynamodb:
-    image: zestyco/dynamodb-challenge:amd
-    networks:
-      - backend
     deploy:
       resources:
         limits:
           cpus: '0.5'
-          memory: 256M
+          memory: 128M
+
+  dynamodb:
+    image: zestyco/dynamodb-challenge:amd
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
     logging:
       driver: "json-file"
       options:
         max-size: "1m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
 networks:
   backend:
-    driver: overlay

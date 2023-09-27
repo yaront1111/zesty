@@ -47,7 +47,6 @@ def get_token():
     token = s.dumps({"token": API_TOKEN})
     return jsonify(token=token)
 
-
 @app.route("/secret", methods=["GET"])
 @limiter.limit("5 per second")
 def get_secret():
@@ -61,17 +60,17 @@ def get_secret():
         logging.warning("Invalid API token.")
         abort(403, description="Invalid API token")
 
-    codeName = request.args.get("codeName")
-    if codeName != CODE_NAME:
-        logging.warning(f"Invalid codeName attempt: {codeName}")
+    # Fetch both secret and codeName from DynamoDB
+    secret_code, codeName_from_db = fetch_secret(CODE_NAME)
+
+    if CODE_NAME != codeName_from_db:
+        logging.warning(f"Invalid codeName attempt: Expected {CODE_NAME}, got {codeName_from_db}")
         abort(403, description="Invalid codeName.")
 
-    secret_code = fetch_secret(codeName)
     if secret_code:
-        return jsonify({"codeName": codeName, "secretCode": secret_code})
+        return jsonify({"codeName": codeName_from_db, "secretCode": secret_code})
     else:
         abort(404, description="Secret code not found.")
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
