@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request, abort
 from flask_limiter import Limiter
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask_limiter.util import get_remote_address
-from App.app import fetch_secret
+from App.app.app import fetch_secret
 import logging
 import os
 
