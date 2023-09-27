@@ -7,7 +7,14 @@ from .app import fetch_secret
 import logging
 import os
 
-# Initialize Flask app and configure logging
+# Initialize secrets
+with open('/run/secrets/api_token', 'r') as file:
+    API_TOKEN = file.read().strip()
+with open('/run/secrets/flask_secret_key', 'r') as file:
+    FLASK_SECRET_KEY = file.read().strip()
+with open('/run/secrets/flask_secret_key', 'r') as file:
+    CODE_NAME = file.read().strip()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'fallbackSecretKey')
 s = Serializer(app.config['SECRET_KEY'])
@@ -19,8 +26,6 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["5 per minute", "5 per second"]
 )
-
-API_TOKEN = os.environ.get('API_TOKEN', 'fallbackApiToken')
 
 @app.route('/health', methods=['GET'])
 @limiter.limit("5 per minute")
@@ -47,7 +52,7 @@ def get_secret():
         abort(403, description="Invalid API token")
 
     codeName = request.args.get('codeName')
-    if codeName != 'theDoctor':
+    if codeName != CODE_NAME:
         logging.warning(f'Invalid codeName attempt: {codeName}')
         abort(403, description="Invalid codeName.")
 
@@ -59,4 +64,4 @@ def get_secret():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)

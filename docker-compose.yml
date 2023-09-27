@@ -1,19 +1,53 @@
 version: '3.8'
 
+secrets:
+  api_token:
+    external: true
+  flask_secret_key:
+    external: true
+  code_name:
+    external: true
+
 services:
   app:
     image: your_container_registry/your_app_image:latest
     ports:
-      - "80:80"
+      - "127.0.0.1:5000:5000"
     environment:
-      - API_TOKEN=yourApiToken
-      - FLASK_SECRET_KEY=yourFlaskSecretKey
       - DYNAMODB_ENDPOINT=http://dynamodb:8000
       - CONTAINER_REGISTRY=your_container_registry
-    depends_on:
-      - dynamodb
+    secrets:
+      - api_token
+      - flask_secret_key
+      - code_name
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   dynamodb:
     image: zestyco/dynamodb-challenge:amd
-    ports:
-      - "8000:8000"
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "3"
+
+networks:
+  backend:
+    driver: overlay
