@@ -64,7 +64,9 @@ def get_secret():
               description="Missing Authorization header")
 
     auth_parts = auth_header.split(" ")
-    if len(auth_parts) != 2 or auth_parts[0] != "Bearer" or auth_parts[1] != API_TOKEN:
+    if (len(auth_parts) != 2 or
+        auth_parts[0] != "Bearer" or
+        auth_parts[1] != API_TOKEN):
         logging.warning("Invalid API token.")
         abort(403, description="Invalid API token")
 
