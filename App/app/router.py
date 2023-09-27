@@ -1,20 +1,20 @@
-# router.py
 from flask import Flask, jsonify, request, abort
 from flask_limiter import Limiter
-from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask_limiter.util import get_remote_address
-import app as secret
+import App.app.secret_handler as secret_handler  # your secret handler
 import logging
 import os
+import jwt
+import datetime
 
 # Initialize secrets
-API_TOKEN = os.environ.get('API_TOKEN', 'testapi')
 FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'testsecret')
 CODE_NAME = os.environ.get('CODE_NAME', 'default_value')
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'test_api')
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "fallbackSecretKey")
-s = Serializer(app.config["SECRET_KEY"])
+app.config["SECRET_KEY"] = FLASK_SECRET_KEY
+
 logging.basicConfig(
     level=logging.INFO,
     filename="audit.log",
@@ -29,6 +29,10 @@ limiter = Limiter(
     default_limits=["5 per minute", "5 per second"],
 )
 
+# Function to verify JWT token
+def verify_jwt_token(token: str):
+    payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
+    return payload
 
 @app.route("/health", methods=["GET"])
 @limiter.limit("5 per minute")
@@ -41,10 +45,9 @@ def health_check():
         }
     )
 
-
-@app.route("/token", methods=["GET"])  # Generate a token
+@app.route("/token", methods=["GET"])
 def get_token():
-    token = s.dumps({"token": API_TOKEN})
+    token = jwt.encode({"exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, JWT_SECRET_KEY, algorithm="HS256")
     return jsonify(token=token)
 
 @app.route("/secret", methods=["GET"])
@@ -56,12 +59,21 @@ def get_secret():
         abort(403, description="Missing Authorization header")
 
     auth_parts = auth_header.split(" ")
-    if len(auth_parts) != 2 or auth_parts[0] != "Bearer" or auth_parts[1] != API_TOKEN:
+    if len(auth_parts) != 2 or auth_parts[0] != "Bearer":
         logging.warning("Invalid API token.")
         abort(403, description="Invalid API token")
 
+    try:
+        verify_jwt_token(auth_parts[1])
+    except jwt.ExpiredSignatureError:
+        logging.warning("Token has expired.")
+        abort(403, description="Token has expired")
+    except jwt.InvalidTokenError:
+        logging.warning("Invalid token.")
+        abort(403, description="Invalid token")
+
     # Fetch both secret and codeName from DynamoDB
-    secret_code, codeName_from_db = secret.fetch_secret(CODE_NAME)
+    secret_code, codeName_from_db = secret_handler.fetch_secret(CODE_NAME)
 
     if CODE_NAME != codeName_from_db:
         logging.warning(f"Invalid codeName attempt: Expected {CODE_NAME}, got {codeName_from_db}")
@@ -71,7 +83,6 @@ def get_secret():
         return jsonify({"codeName": codeName_from_db, "secretCode": secret_code})
     else:
         abort(404, description="Secret code not found.")
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
