@@ -1,4 +1,4 @@
-name: Advanced CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: your_container_registry/your_app_image:latest
+  IMAGE_NAME: yaront111/zesty111:latest
 
 jobs:
   lint:

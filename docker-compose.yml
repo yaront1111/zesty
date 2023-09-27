@@ -10,12 +10,12 @@ secrets:
 
 services:
   app:
-    image: your_container_registry/your_app_image:latest
+    image: yaront111/zesty111:latest
     ports:
       - "127.0.0.1:5000:5000"
     environment:
       - DYNAMODB_ENDPOINT=http://dynamodb:8000
-      - CONTAINER_REGISTRY=your_container_registry
+      - CONTAINER_REGISTRY=https://hub.docker.com/repository/docker/yaront111/zesty111
     secrets:
       - api_token
       - flask_secret_key
