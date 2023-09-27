@@ -57,7 +57,7 @@ jobs:
         images: ${{ env.IMAGE_NAME }}
 
     - name: Login to Docker Registry
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin yaront111/zesty111
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin https://hub.docker.com/repository/docker/yaront111/zesty111
 
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v2
