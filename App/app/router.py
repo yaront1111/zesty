@@ -84,5 +84,6 @@ def get_secret():
     else:
         abort(404, description="Secret code not found.")
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
