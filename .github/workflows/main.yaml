@@ -65,17 +65,5 @@ jobs:
       with:
         context: ./App
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: yaront111/zesty111:latest
         labels: ${{ steps.meta.outputs.labels }}
-
-  deploy:
-    needs: docker
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Deploy to Production
-      run: |
-        chmod +x ./deployment_script.sh
-        ./deployment_script.sh
