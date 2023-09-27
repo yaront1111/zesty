@@ -9,8 +9,8 @@ import os
 
 # Initialize secrets
 API_TOKEN = os.environ.get('API_TOKEN', 'testapi')
-FLASK_SECRET_KEY = os.environ.get['FLASK_SECRET_KEY', 'testsecret']
-CODE_NAME = os.environ.get['CODE_NAME', 'default_value']
+FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'testsecret')
+CODE_NAME = os.environ.get('CODE_NAME', 'default_value')
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "fallbackSecretKey")
