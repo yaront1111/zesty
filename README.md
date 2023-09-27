@@ -1,54 +1,58 @@
-# Welcome to the DevOps challenge
+# DevOps Challenge Project
 
-### Instructions
+## Table of Contents
 
-We've found a data leak in our company, but before we're deleting our resources, we need you to extract the information and deliver it.
-You're assigned with the creation of a device that will be used as a POC to transfer highly sensitive data.
-With the language of your choice follow the instructions below to stop the leak.
-**Your `codeName = thedoctor`** - note that this is code **not** guaranteed to work, and you may need to show some debugging skills to fix it.
+- [Introduction](#introduction)
+- [Getting Started](#getting-started)
+- [Features](#features)
+- [Security Measures](#security-measures)
+- [API Endpoints](#api-endpoints)
+- [Continuous Integration](#continuous-integration)
+- [Docker Compose](#docker-compose)
+- [Logs](#logs)
 
-1. Your task is to write a **containerized** application that will extract the secret string from a DynamoDB table and present it in a web server
-1. The `secretCode` lies in a DynamoDB table `devops-challenge` where `codeName = <YOUR_CODENAME>`
-1. Instead of using keys to reach out to production, we've cloned our DB to a [local dynamodb](https://hub.docker.com/r/amazon/dynamodb-local). You can get it by pulling [`zestyco/dynamodb-challenge:amd`](https://hub.docker.com/repository/docker/zestyco/dynamodb-challenge) container. Note: `latest` tag pulls an arm based container, use `amd` tag if needed instead.
-1. Create a web router that runs in a docker container, which will respond with a json structure as seen below to `/health` and `/secret`
-1. Push your container to a docker registry of your choice and use the address both in your compose file and in the `health` endpoint (see example)
-1. Create a docker-compose file that sets the environment of the app and the db
-1. Lastly, add a README.md with instructions and any other documentation you see fit.
-1. Once completed, reply to the challenge email:
-```
-Subject: DevOps Challenge complete
-Content: Name:      <YOUR_NAME>
-Attached: a compressed tarball of your project
-```
+## Introduction
 
----
+This project serves as a proof-of-concept Flask API that securely fetches a secret code from a local DynamoDB table and exposes it via a web server. The service is containerized with Docker and is designed to be scalable and secure.
 
-The response from `/health` should look like:
-```json
-{
-  "status": "Healthy!",
-  "container": "https://docker.registry.com/somepath"
-}
-```
+## Getting Started
 
-The response from `/secret` should look like:
-```json
-{
-  "codeName": "<YOUR_CODENAME>",
-  "secretCode": "<SECRET_CODE>"
-}
-```
+To get the application running:
 
----
+1. Clone the repository.
+2. Run `docker-compose up` from the root directory.
 
-### Guidance:
+## Features
 
-1. Use `git init` before starting to work and commit your changes as you would normally
-2. Think *security*: Avoid exposing secrets or sensitive information in any way
-3. Examples of different routers in [Ruby](https://github.com/sinatra/sinatra), [Python](http://flask.pocoo.org/), [Go](https://golang.org/pkg/net/http/) and [Node](https://www.npmjs.com/package/http-server) (you're more than welcome to use any language / project of choice)
-4. Structure the project in a maintainable logic way, you may use `/example`
----
+- **Health Check:** Allows monitoring of the API's status.
+- **Rate Limiting:** Adds a rate limit to API requests to prevent abuse.
+- **Logging:** Captures all activities and logs them to `audit.log`.
 
-```
-devops@zesty.co
-```
+## Security Measures
+
+- **JWT Authentication:** Uses JWT (JSON Web Tokens) for secure, stateless authentication.
+- **Environment Variables:** Sensible defaults are overridden by environment variables for better security.
+- **Rate Limiting:** Limits the number of requests to the API, preventing abuse.
+- **HTTPS:** (Optional) Can be deployed with HTTPS to ensure data encryption in transit.
+
+## API Endpoints
+
+- **GET /health:** Returns the health status of the application.
+- **GET /token:** Generates and returns a JWT token.
+- **GET /secret:** Fetches the secret from the DynamoDB table, requires JWT token for authentication.
+
+## Continuous Integration
+
+We use a CI pipeline to ensure the quality and security of the code. Every commit triggers automated tests and code scans for vulnerabilities. For details, refer to the `.yml` configuration file in the repository.
+
+Note: If you need further information or code snippets, feel free to ask.
+
+## Docker Compose
+
+The `docker-compose.yml` file is used to define and run the multi-container Docker applications. This makes it easier to manage both the Flask application and the DynamoDB instance in a secure and isolated environment.
+
+Note: If you need the docker-compose code explained, feel free to ask.
+
+## Logs
+
+The service logs all the important activities and saves them to `audit.log`. Check this log file for historical data and auditing.
