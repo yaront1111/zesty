@@ -16,7 +16,10 @@ with open("/run/secrets/flask_secret_key", "r") as file:
     CODE_NAME = file.read().strip()
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "fallbackSecretKey")
+app.config["SECRET_KEY"] = os.environ.get(
+    "FLASK_SECRET_KEY",
+    "fallbackSecretKey"
+)
 s = Serializer(app.config["SECRET_KEY"])
 logging.basicConfig(
     level=logging.INFO,
@@ -57,7 +60,8 @@ def get_secret():
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         logging.warning("Missing Authorization header.")
-        abort(403, description="Missing Authorization header")
+        abort(403,
+              description="Missing Authorization header")
 
     auth_parts = auth_header.split(" ")
     if len(auth_parts) != 2 or auth_parts[0] != "Bearer" or auth_parts[1] != API_TOKEN:

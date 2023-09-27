@@ -3,7 +3,10 @@ import logging
 import os
 from botocore.exceptions import ClientError, ParamValidationError
 
-DYNAMODB_ENDPOINT = os.environ.get("DYNAMODB_ENDPOINT", "http://localhost:8000")
+DYNAMODB_ENDPOINT = os.environ.get(
+    "DYNAMODB_ENDPOINT",
+    "http://localhost:8000"
+)
 dynamodb = boto3.client(
     "dynamodb", region_name="us-west-2", endpoint_url=DYNAMODB_ENDPOINT
 )
@@ -12,7 +15,9 @@ logging.basicConfig(
     level=logging.INFO,
     filename="fetch_secret.log",
     filemode="a",
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - "
+           "%(levelname)s - "
+           "%(message)s",
 )
 
 def fetch_secret(codeName):
