@@ -8,9 +8,9 @@ import logging
 import os
 
 # Initialize secrets
-API_TOKEN = os.environ['API_TOKEN']
-FLASK_SECRET_KEY = os.environ['FLASK_SECRET_KEY']
-CODE_NAME = os.environ['CODE_NAME']
+API_TOKEN = os.environ.get('API_TOKEN', 'testapi')
+FLASK_SECRET_KEY = os.environ['FLASK_SECRET_KEY', 'testsecret']
+CODE_NAME = os.environ['CODE_NAME', 'default_value']
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "fallbackSecretKey")
