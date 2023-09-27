@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request, abort
 from flask_limiter import Limiter
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask_limiter.util import get_remote_address
-from App.app.app import fetch_secret
+import app as secret
 import logging
 import os
 
@@ -61,7 +61,7 @@ def get_secret():
         abort(403, description="Invalid API token")
 
     # Fetch both secret and codeName from DynamoDB
-    secret_code, codeName_from_db = fetch_secret(CODE_NAME)
+    secret_code, codeName_from_db = secret.fetch_secret(CODE_NAME)
 
     if CODE_NAME != codeName_from_db:
         logging.warning(f"Invalid codeName attempt: Expected {CODE_NAME}, got {codeName_from_db}")
