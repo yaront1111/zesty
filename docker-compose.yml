@@ -3,13 +3,12 @@ version: '3.8'
 services:
   app:
     image: yaront111/zesty111:latest
+    env_file: ./App/app/dev/.env  # Load environment variables from this file
     ports:
       - "127.0.0.1:5000:5000"
     environment:
-      DYNAMODB_ENDPOINT: http://dynamodb:8000
-      CONTAINER_REGISTRY: https://hub.docker.com/repository/docker/yaront111/zesty111
-    env_file:
-      - ./App/app/dev/.env
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000
+      - CONTAINER_REGISTRY=https://hub.docker.com/repository/docker/yaront111/zesty111
     networks:
       - backend
     deploy:

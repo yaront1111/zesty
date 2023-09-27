@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 env:
   IMAGE_NAME: yaront111/zesty111:latest
@@ -34,11 +31,8 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('./App/requirements.txt') }}
+    - name: Load environment variables
+      run: export $(xargs < ./App/app/dev/.env)
 
     - name: Install Dependencies
       run: pip install -r ./App/requirements.txt
