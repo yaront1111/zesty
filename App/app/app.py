@@ -15,7 +15,6 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-
 def fetch_secret(codeName):
     try:
         response = dynamodb.get_item(
